@@ -1,0 +1,51 @@
+﻿@model BeautyBook.Data.Models.Appointment
+
+@{
+    ViewData["Title"] = "Изтриване на час";
+}
+
+<h1>Изтриване на час</h1>
+
+<div class="alert alert-warning">
+    Сигурен/сигурна ли си, че искаш да изтриеш това записване?
+    Това действие не може да бъде отменено.
+</div>
+
+<hr />
+
+<dl class="row">
+    <dt class="col-sm-3">Услуга</dt>
+    <dd class="col-sm-9">
+        @(Model.Service?.Name ?? "Неизвестна услуга")
+    </dd>
+
+    <dt class="col-sm-3">Начало</dt>
+    <dd class="col-sm-9">
+        @Model.StartTime.ToString("dd.MM.yyyy HH:mm")
+    </dd>
+
+    <dt class="col-sm-3">Край</dt>
+    <dd class="col-sm-9">
+        @Model.EndTime.ToString("dd.MM.yyyy HH:mm")
+    </dd>
+
+    <dt class="col-sm-3">Статус</dt>
+    <dd class="col-sm-9">@Model.Status</dd>
+
+    <dt class="col-sm-3">Бележки</dt>
+    <dd class="col-sm-9">@(Model.Notes ?? "—")</dd>
+</dl>
+
+<form asp-action="Delete"
+      asp-route-id="@Model.Id"
+      method="post">
+
+    <button type="submit" class="btn btn-danger">
+        Изтрий часа
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Отказ
+    </a>
+</form>
+

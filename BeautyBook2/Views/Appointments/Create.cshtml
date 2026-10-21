@@ -1,0 +1,130 @@
+﻿@using BeautyBook.Web.ViewModels
+@model CreateAppointmentViewModel
+
+@{
+    ViewData["Title"] = "Запази час";
+}
+
+<h1>Запази час</h1>
+
+<p>Избери услуга и удобно за теб време.</p>
+
+<hr />
+
+<form asp-controller="Appointments" asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="ServiceId" class="form-label"></label>
+
+        <select asp-for="ServiceId"
+                asp-items="Model.Services"
+                class="form-select">
+            <option value="">-- Избери услуга --</option>
+        </select>
+
+        <span asp-validation-for="ServiceId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Date" class="form-label"></label>
+
+        <input asp-for="Date" type="date" class="form-control" />
+
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="StartTime" class="form-label"></label>
+
+        <select asp-for="StartTime" class="form-select">
+            <option value="">-- Избери час --</option>
+        </select>
+
+        <span asp-validation-for="StartTime" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Notes" class="form-label"></label>
+
+        <textarea asp-for="Notes"
+                  class="form-control"
+                  rows="3"></textarea>
+
+        <span asp-validation-for="Notes" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Запази часа
+    </button>
+
+    <a asp-controller="Appointments"
+       asp-action="Index"
+       class="btn btn-secondary">
+        Назад
+    </a>
+</form>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const serviceSelect = document.getElementById("ServiceId");
+        const dateInput = document.getElementById("Date");
+        const timeSelect = document.getElementById("StartTime");
+
+        async function loadAvailableSlots() {
+            const serviceId = serviceSelect.value;
+            const date = dateInput.value;
+
+            timeSelect.innerHTML =
+                '<option value="">-- Избери час --</option>';
+
+            if (!serviceId || !date) {
+                return;
+            }
+
+            timeSelect.disabled = true;
+
+            try {
+                const url =
+                    '@Url.Action("AvailableSlots", "Appointments")'
+                    + '?date=' + encodeURIComponent(date)
+                    + '&serviceId=' + encodeURIComponent(serviceId);
+
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error("Неуспешно зареждане на часовете.");
+                }
+
+                const slots = await response.json();
+
+                if (slots.length === 0) {
+                    timeSelect.innerHTML =
+                        '<option value="">Няма свободни часове</option>';
+                } else {
+                    slots.forEach(function (slot) {
+                        const option = document.createElement("option");
+                        option.value = slot;
+                        option.textContent = slot;
+                        timeSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                timeSelect.innerHTML =
+                    '<option value="">Грешка при зареждане</option>';
+            } finally {
+                timeSelect.disabled = false;
+            }
+        }
+
+        serviceSelect.addEventListener("change", loadAvailableSlots);
+        dateInput.addEventListener("change", loadAvailableSlots);
+    </script>
+}
+
+

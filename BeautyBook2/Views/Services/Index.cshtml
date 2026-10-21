@@ -1,0 +1,52 @@
+﻿@model IEnumerable<BeautyBook.Data.Models.Service>
+
+@{
+    ViewData["Title"] = "Услуги";
+}
+
+<h1>Нашите услуги</h1>
+
+<p>Разгледайте предлаганите услуги, техните цени и продължителност.</p>
+
+<div class="row">
+    @foreach (var service in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@service.Name</h5>
+
+                    <p class="text-muted">
+                        Категория: @service.Category.Name
+                    </p>
+
+                    <p class="card-text">
+                        @(service.Description ?? "Няма описание.")
+                    </p>
+
+                    <p>
+                        <strong>Цена:</strong>
+                        @service.Price.ToString("0.00") евро.
+                    </p>
+
+                    <p>
+                        <strong>Продължителност:</strong>
+                        @service.DurationMinutes мин.
+                    </p>
+
+                    <a asp-controller="Services"
+                       asp-action="Details"
+                       asp-route-id="@service.Id"
+                       class="btn btn-primary">
+                        Виж подробности
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <p>Все още няма добавени услуги.</p>
+}

@@ -1,0 +1,60 @@
+﻿@model BeautyBook.Data.Models.Appointment
+
+@{
+    ViewData["Title"] = "Детайли за резервация";
+}
+
+<div class="container mt-4">
+    <h1>Детайли за резервация</h1>
+    <hr />
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h4 class="card-title">@Model.Service?.Name</h4>
+
+            <dl class="row mt-4">
+                <dt class="col-sm-4">Дата</dt>
+                <dd class="col-sm-8">
+                    @Model.StartTime.ToString("dd.MM.yyyy")
+                </dd>
+
+                <dt class="col-sm-4">Начален час</dt>
+                <dd class="col-sm-8">
+                    @Model.StartTime.ToString("HH:mm")
+                </dd>
+
+                <dt class="col-sm-4">Краен час</dt>
+                <dd class="col-sm-8">
+                    @Model.EndTime.ToString("HH:mm")
+                </dd>
+
+                <dt class="col-sm-4">Статус</dt>
+                <dd class="col-sm-8">@Model.Status</dd>
+
+                <dt class="col-sm-4">Бележки</dt>
+                <dd class="col-sm-8">
+                    @(string.IsNullOrWhiteSpace(Model.Notes)
+                                        ? "Няма добавени бележки."
+                                        : Model.Notes)
+                </dd>
+            </dl>
+
+            <a asp-action="Index" class="btn btn-secondary">
+                Назад към резервациите
+            </a>
+
+            <a asp-action="Edit"
+               asp-route-id="@Model.Id"
+               class="btn btn-primary">
+                Редактирай
+            </a>
+
+            <a asp-action="Delete"
+               asp-route-id="@Model.Id"
+               class="btn btn-danger">
+                Изтрий
+            </a>
+        </div>
+    </div>
+</div>
+

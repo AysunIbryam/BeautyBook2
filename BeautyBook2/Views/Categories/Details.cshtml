@@ -1,0 +1,58 @@
+﻿@model BeautyBook.Data.Models.Category
+
+@{
+    ViewData["Title"] = "Детайли за категория";
+}
+
+<h1>@Model.Name</h1>
+
+<h4>Услуги в категорията</h4>
+
+<hr />
+
+@if (Model.Services.Any())
+{
+    <div class="row">
+        @foreach (var service in Model.Services)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@service.Name</h5>
+
+                        <p class="card-text">
+                            @(service.Description ?? "Няма описание.")
+                        </p>
+
+                        <p>
+                            <strong>Цена:</strong>
+                            @service.Price.ToString("0.00") лв.
+                        </p>
+
+                        <p>
+                            <strong>Продължителност:</strong>
+                            @service.DurationMinutes мин.
+                        </p>
+
+                        <a asp-controller="Services"
+                           asp-action="Details"
+                           asp-route-id="@service.Id"
+                           class="btn btn-outline-primary">
+                            Виж услугата
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>Все още няма услуги в тази категория.</p>
+}
+
+<a asp-controller="Categories"
+   asp-action="Index"
+   class="btn btn-secondary">
+    Назад към категориите
+</a>

@@ -1,0 +1,143 @@
+﻿@using BeautyBook.Web.ViewModels
+```cshtml
+@model CreateAppointmentViewModel
+
+@{
+    ViewData["Title"] = "Редактиране на час";
+}
+
+<h1>Редактиране на час</h1>
+<p>Промени данните за своето записване.</p>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit"
+              asp-route-id="@ViewContext.RouteData.Values["id"]"
+              method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="ServiceId" class="form-label">
+                    Услуга
+                </label>
+                <select asp-for="ServiceId"
+                        asp-items="Model.Services"
+                        class="form-select">
+                    <option value="">-- Избери услуга --</option>
+                </select>
+                <span asp-validation-for="ServiceId"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Date" class="form-label">
+                    Дата
+                </label>
+                <input asp-for="Date"
+                       type="date"
+                       class="form-control" />
+                <span asp-validation-for="Date"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="StartTime" class="form-label">
+                    Начален час
+                </label>
+                <select asp-for="StartTime"
+                        class="form-select"
+                        id="StartTime">
+                    <option value="@Model.StartTime">
+                        @Model.StartTime
+                    </option>
+                </select>
+                <span asp-validation-for="StartTime"
+                      class="text-danger"></span>
+                <small class="form-text text-muted">
+                    При промяна на датата или услугата избери свободен час.
+                </small>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Notes" class="form-label">
+                    Бележки
+                </label>
+                <textarea asp-for="Notes"
+                          class="form-control"
+                          rows="3"></textarea>
+                <span asp-validation-for="Notes"
+                      class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Запази промените
+            </button>
+
+            <a asp-action="Index" class="btn btn-secondary">
+                Отказ
+            </a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const serviceSelect = document.getElementById("ServiceId");
+        const dateInput = document.getElementById("Date");
+        const timeSelect = document.getElementById("StartTime");
+
+        async function loadAvailableSlots() {
+            const serviceId = serviceSelect.value;
+            const date = dateInput.value;
+
+            if (!serviceId || !date) {
+                return;
+            }
+
+            const url = '@Url.Action("AvailableSlots", "Appointments")'
+                + '?date=' + encodeURIComponent(date)
+                + '&serviceId=' + encodeURIComponent(serviceId);
+
+            try {
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    return;
+                }
+
+                const slots = await response.json();
+                const currentValue = timeSelect.value;
+
+                timeSelect.replaceChildren();
+
+                slots.forEach(slot => {
+                    const option = document.createElement("option");
+                    option.value = slot;
+                    option.textContent = slot;
+                    timeSelect.appendChild(option);
+                });
+
+                if (slots.includes(currentValue)) {
+                    timeSelect.value = currentValue;
+                } else if (slots.length === 0) {
+                    const option = document.createElement("option");
+                    option.value = "";
+                    option.textContent = "Няма свободни часове";
+                    timeSelect.appendChild(option);
+                }
+            } catch (error) {
+                console.error("Грешка при зареждане на часовете:", error);
+            }
+        }
+
+        serviceSelect.addEventListener("change", loadAvailableSlots);
+        dateInput.addEventListener("change", loadAvailableSlots);
+    </script>
+}
+
+

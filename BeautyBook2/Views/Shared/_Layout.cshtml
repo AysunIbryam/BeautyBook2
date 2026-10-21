@@ -1,0 +1,99 @@
+﻿
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BeautyBook</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/BeautyBook2.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light beauty-navbar">
+            <div class="container">
+                <a class="navbar-brand beauty-brand"
+                   asp-area=""
+                   asp-controller="Home"
+                   asp-action="Index">
+                    <span class="brand-icon">✿</span>
+                    BeautyBook
+                </a>
+
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar"
+                        aria-expanded="false"
+                        aria-label="Отвори менюто">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Home"
+                               asp-action="Index">
+                                Начало
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Services"
+                               asp-action="Index">
+                                Услуги
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Categories"
+                               asp-action="Index">
+                                Категории
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Appointments"
+                               asp-action="Index">
+                                Моите часове
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="beauty-account">
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="beauty-main">
+        @RenderBody()
+    </main>
+
+    <footer class="beauty-footer">
+        <div class="container text-center">
+            <div class="footer-brand">✿ BeautyBook</div>
+            <p>Твоето време за красота и грижа.</p>
+            <div class="footer-line"></div>
+            <small>
+                &copy; 2026 BeautyBook. Всички права запазени.
+                <a asp-controller="Home" asp-action="Privacy">Поверителност</a>
+            </small>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

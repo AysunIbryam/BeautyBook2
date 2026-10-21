@@ -1,0 +1,134 @@
+﻿@{
+    ViewData["Title"] = "Начало";
+}
+
+<section class="home-hero">
+    <div class="home-hero-content">
+        <span class="home-eyebrow">BEAUTYBOOK · ПЛОВДИВ</span>
+        <h1>Твоята красота.<br />Нашата грижа.</h1>
+        <p>
+            Открий мястото, където професионалната грижа,
+            стилът и красотата се срещат. Предлагаме фризьорски
+            услуги, маникюр и професионален грим за всеки повод.
+        </p>
+
+        <a asp-controller="Appointments"
+           asp-action="Create"
+           class="btn btn-booking">
+            Запази своя час
+        </a>
+    </div>
+</section>
+
+<section class="home-section">
+    <div class="section-heading">
+        <span class="home-eyebrow">НАШИТЕ УСЛУГИ</span>
+        <h2>Красота от главата до върха на пръстите</h2>
+        <p>Избери своята услуга и запази удобен час онлайн.</p>
+    </div>
+
+    <div class="service-cards">
+        <article class="home-service-card">
+            <div class="service-icon">✂</div>
+            <h3>Фризьорство</h3>
+            <p>Дамско подстригване, боядисване и професионално оформяне със сешоар.</p>
+            <a asp-controller="Services" asp-action="Index">Разгледай услугите</a>
+        </article>
+
+        <article class="home-service-card">
+            <div class="service-icon">♡</div>
+            <h3>Маникюр</h3>
+            <p>Класически маникюр, гел лак и изграждане на нокти с внимание към детайла.</p>
+            <a asp-controller="Services" asp-action="Index">Разгледай услугите</a>
+        </article>
+
+        <article class="home-service-card">
+            <div class="service-icon">✧</div>
+            <h3>Професионален грим</h3>
+            <p>Нежен дневен грим или впечатляваща визия за специалните ти моменти.</p>
+            <a asp-controller="Services" asp-action="Index">Разгледай услугите</a>
+        </article>
+    </div>
+</section>
+
+<section class="home-section prices-section">
+    <div class="section-heading">
+        <span class="home-eyebrow">ЦЕНОРАЗПИС</span>
+        <h2>Нашите услуги и цени</h2>
+        <p>Избери процедурата, която е подходяща за теб.</p>
+    </div>
+
+    <div class="price-list">
+        <div class="price-group">
+            <h3>Фризьорство</h3>
+            <div class="price-row">
+                <div><strong>Дамско подстригване</strong><small>45 мин.</small></div>
+                <span>30,00 €</span>
+            </div>
+            <div class="price-row">
+                <div><strong>Боядисване</strong><small>120 мин.</small></div>
+                <span>80,00 €</span>
+            </div>
+            <div class="price-row">
+                <div><strong>Сешоар</strong><small>30 мин.</small></div>
+                <span>20,00 €</span>
+            </div>
+        </div>
+
+        <div class="price-group">
+            <h3>Маникюр</h3>
+            <div class="price-row">
+                <div><strong>Класически маникюр</strong><small>45 мин.</small></div>
+                <span>25,00 €</span>
+            </div>
+            <div class="price-row">
+                <div><strong>Гел лак</strong><small>60 мин.</small></div>
+                <span>35,00 €</span>
+            </div>
+            <div class="price-row">
+                <div><strong>Изграждане на нокти</strong><small>120 мин.</small></div>
+                <span>60,00 €</span>
+            </div>
+        </div>
+
+        <div class="price-group">
+            <h3>Грим</h3>
+            <div class="price-row">
+                <div><strong>Дневен грим</strong><small>45 мин.</small></div>
+                <span>40,00 €</span>
+            </div>
+            <div class="price-row">
+                <div><strong>Вечерен грим</strong><small>60 мин.</small></div>
+                <span>70,00 €</span>
+            </div>
+        </div>
+    </div>
+
+  
+</section>
+
+<section class="home-section salon-info">
+    <div class="info-card">
+        <span class="home-eyebrow">КОГА ДА НИ ПОСЕТИШ</span>
+        <h2>Работно време</h2>
+        <div class="info-row"><span>Понеделник – Събота</span><strong>09:00 – 18:00 ч.</strong></div>
+        <div class="info-row"><span>Неделя</span><strong>Почивен ден</strong></div>
+    </div>
+
+    <div class="info-card">
+        <span class="home-eyebrow">КЪДЕ ДА НИ НАМЕРИШ</span>
+        <h2>Нашият адрес</h2>
+        <p class="address-text">гр. Пловдив, ул. „Здраве“ № 6</p>
+       
+    </div>
+</section>
+
+<section class="home-cta">
+    <h2>Време е да се погрижиш за себе си</h2>
+    <p>Избери услуга и запази своя час лесно и удобно.</p>
+    <a asp-controller="Appointments"
+       asp-action="Create"
+       class="btn btn-booking">
+        Запази своя час
+    </a>
+</section>
