@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BeautyBook.Data.Models\BeautyBook.Data.Models.csproj" />
+    <ProjectReference Include="..\BeautyBook.Data\BeautyBook.Data.csproj" />
   </ItemGroup>
 
 </Project>

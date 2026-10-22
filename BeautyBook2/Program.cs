@@ -1,3 +1,5 @@
+using BeautyBook.Services.Core.Contracts;
+using BeautyBook.Services.Core.Services;
 using BeautyBook.Data;
 using BeautyBook.Data.Models;
 using Microsoft.AspNetCore.Identity;
@@ -21,8 +23,7 @@ namespace BeautyBook.Web
                 (options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-           
-
+            builder.Services.AddScoped<IAppointmentService, AppointmentService>();
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();

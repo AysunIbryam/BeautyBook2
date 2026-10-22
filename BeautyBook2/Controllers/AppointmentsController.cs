@@ -1,4 +1,4 @@
-﻿
+﻿using BeautyBook.Services.Core.Contracts;
 using System.Globalization;
 using BeautyBook.Web.ViewModels;
 using BeautyBook.Data.Models;
@@ -16,14 +16,19 @@ namespace BeautyBook.Web.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly IAppointmentService appointmentService;
+
 
         public AppointmentsController(
             ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            IAppointmentService appointmentService)
         {
             this.context = context;
             this.userManager = userManager;
+            this.appointmentService = appointmentService;
         }
+
 
         public async Task<IActionResult> Index()
         {
@@ -335,12 +340,12 @@ namespace BeautyBook.Web.Controllers
             }
 
             // Проверяваме за застъпване с друга активна резервация.
-            var hasConflict = await context.Appointments
-                .AnyAsync(a =>
-                a.StartTime < endTime
-                && a.EndTime > startTime);
+            var isAvailable = await appointmentService.IsAvailableAsync(
+                model.Date!.Value.Date,
+                selectedTime,
+                service.Id);
 
-            if (hasConflict)
+            if (!isAvailable)
             {
                 ModelState.AddModelError(
                     nameof(model.StartTime),
@@ -421,8 +426,6 @@ namespace BeautyBook.Web.Controllers
 
             return Json(slots);
         }
-
-
         private async Task LoadServicesAsync(
             CreateAppointmentViewModel model)
         {
@@ -437,8 +440,5 @@ namespace BeautyBook.Web.Controllers
                 "Name",
                 model.ServiceId);
         }
-
-       
-
     }
 }

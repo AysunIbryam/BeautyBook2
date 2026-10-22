@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BeautyBook.Data.Models\BeautyBook.Data.Models.csproj" />
+    <ProjectReference Include="..\BeautyBook.Data\BeautyBook.Data.csproj" />
+    <ProjectReference Include="..\BeautyBook.Services.Core\BeautyBook.Services.Core.csproj" />
+  </ItemGroup>
+
+</Project>
