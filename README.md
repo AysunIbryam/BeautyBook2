@@ -52,7 +52,7 @@ Make sure you have the following installed before running the project:
 
 - [.NET SDK 8.0+](https://dotnet.microsoft.com/download)
 - [Visual Studio 2022](https://visualstudio.microsoft.com/) or [VS Code](https://code.visualstudio.com/)
-- [SQL Server](https://www.microsoft.com/en-us/sql-server) or SQLite (if used)
+- [SQL Server](https://www.microsoft.com/en-us/sql-server) 
 - [Git](https://git-scm.com/)
 
 ---
@@ -86,23 +86,80 @@ dotnet ef database update
 dotnet run
 ```
 
-The app will be available at `https://localhost:5001` or `http://localhost:5000`.
+The app will be available at `https://localhost:7174` or `http://localhost:5004`.
 
 ---
 
 ## 📁 Project Structure
 
 ```
-YourProjectName/
+BeautyBook2/
 │
-├── Controllers/          # MVC Controllers
-├── Models/               # Domain models and ViewModels
-├── Views/                # Razor Views (.cshtml)
-├── Data/                 # DbContext and migrations
-├── Services/             # Business logic / service layer
-├── wwwroot/              # Static files (CSS, JS, images)
-├── appsettings.json      # App configuration
-└── Program.cs            # App entry point and middleware setup
+├── BeautyBook.Data/
+│   ├── ApplicationDbContext.cs
+│   └── Migrations/
+│
+├── BeautyBook.Data.Models/Models/
+│   ├── ApplicationUser.cs
+│   ├── Appointment.cs
+│   ├── Category.cs
+│   └── Service.cs
+│
+├── BeautyBook.Services.Core/
+│   ├── Contracts/
+│   └── Services/
+│
+└── BeautyBook.Web/
+    │
+    ├── Properties/
+    │   ├── launchSettings.json
+    │   ├── servicesDependencies.json
+    ├── wwwroot/
+    │   ├── css/
+    │   ├── js/
+    │   ├── images/
+    │   └── lib/
+    ├── Areas/
+    │   ├── Identity/
+    │       ├── Pages.cshtml
+    │    	   ├── Account.cshtml
+    │       		├── ValidationScriptPartial.cshtml
+    │       		├── _ViewImports.cshtml
+    │       		├── _ViewStart.cshtml
+    ├── Controllers/
+    │   ├── AppointmentsController.cs
+    │   ├── CategoriesController.cs
+    │   ├── HomeController.cs
+    │   └── ServicesController.cs 
+    │
+    ├── ViewModels/
+    │   ├── CreateAppointmentViewModel.cs
+    │   └── ErrorViewModel.cs
+    │
+    ├── Views/
+    │   ├── Appointments/
+    │       ├── Create.cshtml
+    │       ├── Delete.cshtml
+    │       ├── Details.cshtml
+    │       ├── Edit.cshtml
+    │       └── Index.cshtml
+    │   ├── Categories/
+    │       ├── Details.cshtml
+    │       └── Idex.cshtml
+    │   ├── Home/
+    │       ├── Index.cshtml
+    │       └── Privacy.cshtml
+    │   ├── Services/
+    │       ├── Details.cshtml
+    │       └── Index.cshtml
+    │   └── Shared/
+    │       ├── _ViewImports.cshtml
+    │       └── ViewStart.cshtml
+    │   └── _ViewImports.cshtml
+    │
+    ├── appsettings.json
+    ├── Program.cs
+
 ```
 
 ---
@@ -110,7 +167,7 @@ YourProjectName/
 ## ✨ Features
 
 - [ ] User registration and login (ASP.NET Identity)
-- [ ] CRUD operations for [main entity]
+- [ ] CRUD operations for Appointments
 - [ ] RESTful API endpoints
 - [ ] Input validation (server-side & client-side)
 - [ ] Responsive UI with Bootstrap
@@ -119,15 +176,24 @@ YourProjectName/
 
 ## 💻 Usage
 
-Describe how to use the main features of the app after launching it. Add screenshots if possible.
 
 ```
-1. Navigate to /Register to create an account.
-2. Log in at /Login.
-3. Use the dashboard to manage your [entities].
+1.Open the Website
+Launch the application and open it in your web browser.
+
+2.Register an Account
+Click the Регистрация button to open the registration page. Fill in the required fields and submit the form to create a new account. The registration form is displayed in Bulgarian.
+
+3.Log In
+Use the login page to sign in with your registered account.
+
+4.Browse Beauty Services
+Explore the available beauty services and view their details and categories.
+
+5.Manage Appointments
+Navigate to the appointments section to view appointment information and use the available options to create, edit, view, or delete appointments
 ```
 
-> 💡 **Tip:** You can add screenshots using: `![Screenshot](docs/screenshot.png)`
 
 ---
 
@@ -139,7 +205,7 @@ Connection string is configured in `appsettings.json`:
 
 ```json
 "ConnectionStrings": {
-  "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=YourDbName;Trusted_Connection=True;"
+  "DefaultConnection": "Server=.;Database=beautyBook; Trusted_Connection=True;TrustServerCertificate=True;"
 }
 ```
 
@@ -159,7 +225,7 @@ Key settings in `appsettings.json`:
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "your-connection-string-here"
+    "DefaultConnection": "Server=.;Database=beautyBook; Trusted_Connection=True;TrustServerCertificate=True;"
   },
   "Logging": {
     "LogLevel": {
@@ -169,7 +235,7 @@ Key settings in `appsettings.json`:
 }
 ```
 
-> ⚠️ **Never commit sensitive data** (passwords, API keys) to source control. Use `appsettings.Development.json` or environment variables for local secrets.
+
 
 ---
 
