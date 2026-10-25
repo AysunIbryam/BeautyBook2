@@ -1,4 +1,5 @@
-﻿using BeautyBook.Services.Core.Contracts;
+﻿
+using BeautyBook.Services.Core.Contracts;
 using BeautyBook.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -25,7 +26,8 @@ namespace BeautyBook.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = userManager.GetUserId(User)!;
-            var appointments = await appointmentService.GetUserAppointmentsAsync(userId);
+            var appointments =
+                await appointmentService.GetUserAppointmentsAsync(userId);
 
             return View(appointments);
         }
@@ -34,7 +36,8 @@ namespace BeautyBook.Web.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var userId = userManager.GetUserId(User)!;
-            var appointment = await appointmentService.GetByIdAsync(id, userId);
+            var appointment =
+                await appointmentService.GetByIdAsync(id, userId);
 
             if (appointment == null)
             {
@@ -48,7 +51,8 @@ namespace BeautyBook.Web.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var userId = userManager.GetUserId(User)!;
-            var appointment = await appointmentService.GetByIdAsync(id, userId);
+            var appointment =
+                await appointmentService.GetByIdAsync(id, userId);
 
             if (appointment == null)
             {
@@ -70,11 +74,16 @@ namespace BeautyBook.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, CreateAppointmentViewModel model)
+        public async Task<IActionResult> Edit(
+            int id,
+            CreateAppointmentViewModel model)
         {
             var userId = userManager.GetUserId(User)!;
 
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid ||
+                !model.ServiceId.HasValue ||
+                !model.Date.HasValue ||
+                string.IsNullOrWhiteSpace(model.StartTime))
             {
                 await LoadServicesAsync(model);
                 return View(model);
@@ -83,14 +92,17 @@ namespace BeautyBook.Web.Controllers
             var success = await appointmentService.EditAsync(
                 id,
                 model.ServiceId.Value,
-                model.Date!.Value,
+                model.Date.Value,
                 model.StartTime,
                 model.Notes,
                 userId);
 
             if (!success)
             {
-                ModelState.AddModelError(string.Empty, "Възникна грешка при обновяване на резервацията или часът е зает/невалиден.");
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Възникна грешка при обновяване на резервацията или часът е зает/невалиден.");
+
                 await LoadServicesAsync(model);
                 return View(model);
             }
@@ -102,7 +114,8 @@ namespace BeautyBook.Web.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var userId = userManager.GetUserId(User)!;
-            var appointment = await appointmentService.GetByIdAsync(id, userId);
+            var appointment =
+                await appointmentService.GetByIdAsync(id, userId);
 
             if (appointment == null)
             {
@@ -117,7 +130,8 @@ namespace BeautyBook.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var userId = userManager.GetUserId(User)!;
-            var success = await appointmentService.DeleteAsync(id, userId);
+            var success =
+                await appointmentService.DeleteAsync(id, userId);
 
             if (!success)
             {
@@ -131,6 +145,7 @@ namespace BeautyBook.Web.Controllers
         public async Task<IActionResult> Create()
         {
             var model = new CreateAppointmentViewModel();
+
             await LoadServicesAsync(model);
 
             return View(model);
@@ -138,9 +153,13 @@ namespace BeautyBook.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateAppointmentViewModel model)
+        public async Task<IActionResult> Create(
+            CreateAppointmentViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid ||
+                !model.ServiceId.HasValue ||
+                !model.Date.HasValue ||
+                string.IsNullOrWhiteSpace(model.StartTime))
             {
                 await LoadServicesAsync(model);
                 return View(model);
@@ -150,14 +169,17 @@ namespace BeautyBook.Web.Controllers
 
             var success = await appointmentService.CreateAsync(
                 model.ServiceId.Value,
-                model.Date!.Value,
+                model.Date.Value,
                 model.StartTime,
                 model.Notes,
                 userId);
 
             if (!success)
             {
-                ModelState.AddModelError(nameof(model.StartTime), "Избраният час е невалиден или вече е зает.");
+                ModelState.AddModelError(
+                    nameof(model.StartTime),
+                    "Избраният час е невалиден или вече е зает.");
+
                 await LoadServicesAsync(model);
                 return View(model);
             }
@@ -166,15 +188,23 @@ namespace BeautyBook.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AvailableSlots(DateTime date, int serviceId)
+        public async Task<IActionResult> AvailableSlots(
+            DateTime date,
+            int serviceId)
         {
-            var slots = await appointmentService.GetAvailableSlotsAsync(date, serviceId);
+            var slots =
+                await appointmentService.GetAvailableSlotsAsync(
+                    date,
+                    serviceId);
+
             return Json(slots);
         }
 
-        private async Task LoadServicesAsync(CreateAppointmentViewModel model)
+        private async Task LoadServicesAsync(
+            CreateAppointmentViewModel model)
         {
-            var services = await appointmentService.GetAllServicesAsync();
+            var services =
+                await appointmentService.GetAllServicesAsync();
 
             model.Services = new SelectList(
                 services,
