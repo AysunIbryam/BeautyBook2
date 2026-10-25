@@ -259,7 +259,7 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 
 ## 📬 Contact
 
-**Aysun Yasharova** – [@your-github](https://github.com/AysunIbryam)
+**Aysun Yasharova** – [https://github.com/AysunIbryam]
 
 Project Link: [https://github.com/AysunIbryam/BeautyBook2]
 
