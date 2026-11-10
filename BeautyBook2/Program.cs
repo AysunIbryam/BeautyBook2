@@ -26,6 +26,7 @@ namespace BeautyBook.Web
             builder.Services.AddScoped<IAppointmentService, AppointmentService>();
             builder.Services.AddControllersWithViews();
 
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
