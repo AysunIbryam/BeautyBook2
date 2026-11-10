@@ -24,6 +24,8 @@ namespace BeautyBook.Web
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<ISalonServiceService, SalonServiceService>();
             builder.Services.AddControllersWithViews();
 
 

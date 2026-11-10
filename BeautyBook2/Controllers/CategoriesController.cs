@@ -1,24 +1,21 @@
-﻿using BeautyBook.Data;
+﻿using BeautyBook.Services.Core.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BeautyBook.Web.Controllers
 {
     public class CategoriesController : Controller
     {
-        private readonly ApplicationDbContext context;
+        private readonly ICategoryService categoryService;
 
-        public CategoriesController(ApplicationDbContext context)
+        public CategoriesController(ICategoryService categoryService)
         {
-            this.context = context;
+            this.categoryService = categoryService;
         }
 
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            var categories = await context.Categories
-                .AsNoTracking()
-                .ToListAsync();
+            var categories = await categoryService.GetAllAsync();
 
             return View(categories);
         }
@@ -26,10 +23,7 @@ namespace BeautyBook.Web.Controllers
         // GET: Categories/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            var category = await context.Categories
-                .AsNoTracking()
-                .Include(c => c.Services)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var category = await categoryService.GetByIdAsync(id);
 
             if (category == null)
             {

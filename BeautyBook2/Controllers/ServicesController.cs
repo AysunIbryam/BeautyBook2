@@ -1,5 +1,6 @@
 ﻿
 using BeautyBook.Data;
+using BeautyBook.Services.Core.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,31 +8,22 @@ namespace BeautyBook.Web.Controllers
 {
     public class ServicesController : Controller
     {
-        private readonly ApplicationDbContext context;
+        private readonly ISalonServiceService serviceService;
 
-        public ServicesController(ApplicationDbContext context)
+        public ServicesController(ISalonServiceService serviceService)
         {
-            this.context = context;
+            this.serviceService = serviceService;
         }
 
-        // GET: Services
         public async Task<IActionResult> Index()
         {
-            var services = await context.Services
-                .Include(s => s.Category)
-                .AsNoTracking()
-                .ToListAsync();
-
+            var services = await serviceService.GetAllAsync();
             return View(services);
         }
 
-        // GET: Services/Details/1
         public async Task<IActionResult> Details(int id)
         {
-            var service = await context.Services
-                .Include(s => s.Category)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(s => s.Id == id);
+            var service = await serviceService.GetByIdAsync(id);
 
             if (service == null)
             {
