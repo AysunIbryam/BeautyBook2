@@ -4,6 +4,8 @@ using BeautyBook.Data;
 using BeautyBook.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using BeautyBook.Data.Repositories.Contracts;
+using BeautyBook.Data.Repositories.Implementations;
 
 namespace BeautyBook.Web
 {
@@ -23,6 +25,9 @@ namespace BeautyBook.Web
                 (options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
             builder.Services.AddScoped<IAppointmentService, AppointmentService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<ISalonServiceService, SalonServiceService>();

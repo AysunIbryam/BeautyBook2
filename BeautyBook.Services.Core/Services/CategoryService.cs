@@ -1,5 +1,6 @@
 ﻿using BeautyBook.Data;
 using BeautyBook.Data.Models;
+using BeautyBook.Data.Repositories.Contracts;
 using BeautyBook.Services.Core.Contracts;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,26 +8,21 @@ namespace BeautyBook.Services.Core.Services
 {
     public class CategoryService : ICategoryService
     {
-        private readonly ApplicationDbContext context;
+        private readonly ICategoryRepository categoryRepository;
 
-        public CategoryService(ApplicationDbContext context)
+        public CategoryService(ICategoryRepository categoryRepository)
         {
-            this.context = context;
+            this.categoryRepository = categoryRepository;
         }
 
         public async Task<IEnumerable<Category>> GetAllAsync()
         {
-            return await context.Categories
-                .AsNoTracking()
-                .ToListAsync();
+            return await categoryRepository.GetAllAsync();
         }
 
         public async Task<Category?> GetByIdAsync(int id)
         {
-            return await context.Categories
-                .Include(c => c.Services)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == id);
+            return await categoryRepository.GetByIdWithServicesAsync(id);
         }
     }
 }

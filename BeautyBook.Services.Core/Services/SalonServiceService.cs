@@ -1,33 +1,26 @@
-﻿using BeautyBook.Data;
-using BeautyBook.Data.Models;
+﻿using BeautyBook.Data.Models;
+using BeautyBook.Data.Repositories.Contracts;
 using BeautyBook.Services.Core.Contracts;
-using Microsoft.EntityFrameworkCore;
 
 namespace BeautyBook.Services.Core.Services
 {
     public class SalonServiceService : ISalonServiceService
     {
-        private readonly ApplicationDbContext context;
+        private readonly IServiceRepository serviceRepository;
 
-        public SalonServiceService(ApplicationDbContext context)
+        public SalonServiceService(IServiceRepository serviceRepository)
         {
-            this.context = context;
+            this.serviceRepository = serviceRepository;
         }
 
         public async Task<IEnumerable<Service>> GetAllAsync()
         {
-            return await context.Services
-                .Include(s => s.Category)
-                .AsNoTracking()
-                .ToListAsync();
+            return await serviceRepository.GetAllWithCategoryAsync();
         }
 
         public async Task<Service?> GetByIdAsync(int id)
         {
-            return await context.Services
-                .Include(s => s.Category)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(s => s.Id == id);
+            return await serviceRepository.GetByIdWithCategoryAsync(id);
         }
     }
 }

@@ -22,7 +22,7 @@ body {
 }
 
 
-/* Основни цветове */
+
 :root {
     --beauty-pink: #c66b83;
     --beauty-pink-dark: #a94e68;
@@ -41,7 +41,6 @@ body {
     flex-direction: column;
 }
 
-/* Навигация */
 .beauty-navbar {
     background-color: #ffffff;
     padding: 16px 0;
@@ -74,7 +73,6 @@ body {
         color: var(--beauty-pink-dark);
     }
 
-/* Основно съдържание */
 .beauty-main {
     flex: 1;
     width: 100%;
@@ -90,7 +88,6 @@ p {
     line-height: 1.7;
 }
 
-/* Бутони */
 .btn-primary {
     background-color: var(--beauty-pink);
     border-color: var(--beauty-pink);
@@ -126,7 +123,7 @@ p {
     padding: 10px 22px;
 }
 
-/* Карти за услугите и категориите */
+
 .card {
     background-color: #ffffff;
     border: 1px solid #f1e3e7;
@@ -149,7 +146,7 @@ p {
     margin-bottom: 15px;
 }
 
-/* Форми */
+
 .form-control,
 .form-select {
     border: 1px solid #e8d5dc;
@@ -168,7 +165,6 @@ p {
     font-weight: 600;
 }
 
-/* Таблици */
 .table {
     background-color: #ffffff;
     border-radius: 12px;
@@ -187,7 +183,7 @@ p {
         vertical-align: middle;
     }
 
-/* Долен колонтитул */
+
 .beauty-footer {
     background-color: #ffffff;
     border-top: 1px solid #f0dfe5;
@@ -224,7 +220,7 @@ p {
         text-decoration: underline;
     }
 
-/* Мобилни устройства */
+
 @media (max-width: 991px) {
     .beauty-navbar .navbar-nav {
         padding: 12px 0;
@@ -243,7 +239,7 @@ p {
     }
 }
 
-/* Начална страница BeautyBook */
+
 
 .home-hero {
     min-height: 390px;

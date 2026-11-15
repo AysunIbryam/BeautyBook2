@@ -1,18 +1,21 @@
-﻿using BeautyBook.Data;
-using BeautyBook.Data.Models;
+﻿using BeautyBook.Data.Models;
+using BeautyBook.Data.Repositories.Contracts;
 using BeautyBook.Services.Core.Contracts;
-using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
 namespace BeautyBook.Services.Core.Services
 {
     public class AppointmentService : IAppointmentService
     {
-        private readonly ApplicationDbContext context;
+        private readonly IAppointmentRepository appointmentRepository;
+        private readonly IServiceRepository serviceRepository;
 
-        public AppointmentService(ApplicationDbContext context)
+        public AppointmentService(
+            IAppointmentRepository appointmentRepository,
+            IServiceRepository serviceRepository)
         {
-            this.context = context;
+            this.appointmentRepository = appointmentRepository;
+            this.serviceRepository = serviceRepository;
         }
 
         public async Task<bool> IsAvailableAsync(
@@ -20,9 +23,7 @@ namespace BeautyBook.Services.Core.Services
             TimeSpan startTime,
             int serviceId)
         {
-            var service = await context.Services
-                .AsNoTracking()
-                .FirstOrDefaultAsync(s => s.Id == serviceId);
+            var service = await serviceRepository.GetByIdReadOnlyAsync(serviceId);
 
             if (service == null)
             {
@@ -32,30 +33,20 @@ namespace BeautyBook.Services.Core.Services
             var appointmentStart = date.Date.Add(startTime);
             var appointmentEnd = appointmentStart.AddMinutes(service.DurationMinutes);
 
-            var hasConflict = await context.Appointments
-                .AnyAsync(a =>
-                    a.StartTime < appointmentEnd &&
-                    a.EndTime > appointmentStart);
+            var hasConflict = await appointmentRepository
+                .HasConflictAsync(appointmentStart, appointmentEnd);
 
             return !hasConflict;
         }
 
         public async Task<IEnumerable<Appointment>> GetUserAppointmentsAsync(string userId)
         {
-            return await context.Appointments
-                .Include(a => a.Service)
-                .Where(a => a.UserId == userId)
-                .AsNoTracking()
-                .OrderBy(a => a.StartTime)
-                .ToListAsync();
+            return await appointmentRepository.GetByUserAsync(userId);
         }
 
         public async Task<Appointment?> GetByIdAsync(int id, string userId)
         {
-            return await context.Appointments
-                .Include(a => a.Service)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId);
+            return await appointmentRepository.GetByIdForUserAsync(id, userId);
         }
 
         public async Task<bool> CreateAsync(int serviceId, DateTime date, string startTimeStr, string? notes, string userId)
@@ -65,9 +56,7 @@ namespace BeautyBook.Services.Core.Services
                 return false;
             }
 
-            var service = await context.Services
-                .AsNoTracking()
-                .FirstOrDefaultAsync(s => s.Id == serviceId);
+            var service = await serviceRepository.GetByIdReadOnlyAsync(serviceId);
 
             if (service == null) return false;
 
@@ -92,16 +81,16 @@ namespace BeautyBook.Services.Core.Services
                 ServiceId = service.Id
             };
 
-            context.Appointments.Add(appointment);
-            await context.SaveChangesAsync();
+            await appointmentRepository.AddAsync(appointment);
+            await appointmentRepository.SaveChangesAsync();
 
             return true;
         }
 
         public async Task<bool> EditAsync(int id, int serviceId, DateTime date, string startTimeStr, string? notes, string userId)
         {
-            var appointment = await context.Appointments
-                .FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId);
+            var appointment = await appointmentRepository
+                .GetTrackedByIdForUserAsync(id, userId);
 
             if (appointment == null) return false;
 
@@ -110,9 +99,7 @@ namespace BeautyBook.Services.Core.Services
                 return false;
             }
 
-            var service = await context.Services
-                .AsNoTracking()
-                .FirstOrDefaultAsync(s => s.Id == serviceId);
+            var service = await serviceRepository.GetByIdReadOnlyAsync(serviceId);
 
             if (service == null) return false;
 
@@ -124,8 +111,8 @@ namespace BeautyBook.Services.Core.Services
                 return false;
             }
 
-            var hasConflict = await context.Appointments
-                .AnyAsync(a => a.Id != id && a.StartTime < endTime && a.EndTime > startTime);
+            var hasConflict = await appointmentRepository
+                .HasConflictAsync(startTime, endTime, id);
 
             if (hasConflict) return false;
 
@@ -134,29 +121,26 @@ namespace BeautyBook.Services.Core.Services
             appointment.EndTime = endTime;
             appointment.Notes = notes;
 
-            await context.SaveChangesAsync();
+            await appointmentRepository.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> DeleteAsync(int id, string userId)
         {
-            var appointment = await context.Appointments
-                .FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId);
+            var appointment = await appointmentRepository
+                .GetTrackedByIdForUserAsync(id, userId);
 
             if (appointment == null) return false;
 
-            context.Appointments.Remove(appointment);
-            await context.SaveChangesAsync();
+            appointmentRepository.Delete(appointment);
+            await appointmentRepository.SaveChangesAsync();
 
             return true;
         }
 
         public async Task<IEnumerable<Service>> GetAllServicesAsync()
         {
-            return await context.Services
-                .AsNoTracking()
-                .OrderBy(s => s.Name)
-                .ToListAsync();
+            return await serviceRepository.GetAllOrderedByNameAsync();
         }
 
         public async Task<List<string>> GetAvailableSlotsAsync(DateTime date, int serviceId)
@@ -166,16 +150,11 @@ namespace BeautyBook.Services.Core.Services
                 return new List<string>();
             }
 
-            var service = await context.Services
-                .AsNoTracking()
-                .FirstOrDefaultAsync(s => s.Id == serviceId);
+            var service = await serviceRepository.GetByIdReadOnlyAsync(serviceId);
 
             if (service == null) return new List<string>();
 
-            var appointments = await context.Appointments
-                .Where(a => a.StartTime.Date == date.Date)
-                .AsNoTracking()
-                .ToListAsync();
+            var appointments = await appointmentRepository.GetByDateAsync(date);
 
             var slots = new List<string>();
             var openingTime = new TimeSpan(9, 0, 0);
