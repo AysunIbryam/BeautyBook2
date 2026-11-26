@@ -14,13 +14,15 @@ namespace BeautyBook.Web.Controllers
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IAppointmentService appointmentService;
-
+        private readonly IEmployeeService employeeService;
         public AppointmentsController(
             UserManager<ApplicationUser> userManager,
-            IAppointmentService appointmentService)
+            IAppointmentService appointmentService,
+            IEmployeeService employeeService)
         {
             this.userManager = userManager;
             this.appointmentService = appointmentService;
+            this.employeeService= employeeService;
         }
 
         public async Task<IActionResult> Index()
@@ -62,6 +64,7 @@ namespace BeautyBook.Web.Controllers
             var model = new CreateAppointmentViewModel
             {
                 ServiceId = appointment.ServiceId,
+                EmployeeId = appointment.EmployeeId,
                 Date = appointment.StartTime.Date,
                 StartTime = appointment.StartTime.ToString("HH:mm"),
                 Notes = appointment.Notes
@@ -82,6 +85,7 @@ namespace BeautyBook.Web.Controllers
 
             if (!ModelState.IsValid ||
                 !model.ServiceId.HasValue ||
+                !model.EmployeeId.HasValue ||
                 !model.Date.HasValue ||
                 string.IsNullOrWhiteSpace(model.StartTime))
             {
@@ -92,6 +96,7 @@ namespace BeautyBook.Web.Controllers
             var success = await appointmentService.EditAsync(
                 id,
                 model.ServiceId.Value,
+                model.EmployeeId.Value,
                 model.Date.Value,
                 model.StartTime,
                 model.Notes,
@@ -158,6 +163,7 @@ namespace BeautyBook.Web.Controllers
         {
             if (!ModelState.IsValid ||
                 !model.ServiceId.HasValue ||
+                !model.EmployeeId.HasValue ||
                 !model.Date.HasValue ||
                 string.IsNullOrWhiteSpace(model.StartTime))
             {
@@ -169,6 +175,7 @@ namespace BeautyBook.Web.Controllers
 
             var success = await appointmentService.CreateAsync(
                 model.ServiceId.Value,
+                model.EmployeeId.Value,
                 model.Date.Value,
                 model.StartTime,
                 model.Notes,
@@ -189,15 +196,28 @@ namespace BeautyBook.Web.Controllers
 
         [HttpGet]
         public async Task<IActionResult> AvailableSlots(
-            DateTime date,
-            int serviceId)
+             DateTime date,
+             int serviceId,
+             int employeeId)
         {
-            var slots =
-                await appointmentService.GetAvailableSlotsAsync(
-                    date,
-                    serviceId);
+            var slots = await appointmentService.GetAvailableSlotsAsync(
+                date,
+                serviceId,
+                employeeId);
 
             return Json(slots);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EmployeesByService(int serviceId)
+        {
+            var employees = await employeeService.GetByServiceAsync(serviceId);
+
+            return Json(employees.Select(e => new
+            {
+                id = e.Id,
+                name = $"{e.FullName} – {e.Position}"
+            }));
         }
 
         private async Task LoadServicesAsync(

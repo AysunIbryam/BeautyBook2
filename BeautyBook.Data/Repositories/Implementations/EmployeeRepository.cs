@@ -21,5 +21,18 @@ namespace BeautyBook.Data.Repositories.Implementations
                 .ThenBy(e => e.FirstName)
                 .ToListAsync();
         }
+        public async Task<IEnumerable<Employee>> GetByCategoryAsync(int categoryId)
+        {
+            return await AllAsNoTracking()
+                .Where(e => e.CategoryId == categoryId)
+                .OrderBy(e => e.FirstName)
+                .ToListAsync();
+        }
+
+        public async Task<Employee?> GetByIdReadOnlyAsync(int id)
+        {
+            return await AllAsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == id);
+        }
     }
 }

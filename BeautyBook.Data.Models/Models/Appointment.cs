@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BeautyBook.Data.Models.Models;
 
 namespace BeautyBook.Data.Models
 {
@@ -26,6 +27,9 @@ namespace BeautyBook.Data.Models
         public int ServiceId { get; set; }
 
         public Service Service { get; set; } = null!;
-    }
 
+        public int EmployeeId { get; set; }
+
+        public Employee Employee { get; set; } = null!;
+    }
 }

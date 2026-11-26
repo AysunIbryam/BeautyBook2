@@ -10,6 +10,10 @@ namespace BeautyBook.Web.ViewModels
         [Display(Name = "Услуга")]
         public int? ServiceId { get; set; }
 
+        [Required(ErrorMessage = "Моля, изберете служител.")]
+        [Display(Name = "Служител")]
+        public int? EmployeeId { get; set; }
+
         [Required(ErrorMessage = "Моля, изберете дата.")]
         [DataType(DataType.Date)]
         [Display(Name = "Дата")]

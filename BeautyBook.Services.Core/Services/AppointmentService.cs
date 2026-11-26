@@ -1,4 +1,5 @@
 ﻿using BeautyBook.Data.Models;
+using BeautyBook.Data.Models.Models;
 using BeautyBook.Data.Repositories.Contracts;
 using BeautyBook.Services.Core.Contracts;
 using System.Globalization;
@@ -9,19 +10,23 @@ namespace BeautyBook.Services.Core.Services
     {
         private readonly IAppointmentRepository appointmentRepository;
         private readonly IServiceRepository serviceRepository;
+        private readonly IEmployeeRepository employeeRepository;
 
         public AppointmentService(
             IAppointmentRepository appointmentRepository,
-            IServiceRepository serviceRepository)
+            IServiceRepository serviceRepository,
+            IEmployeeRepository employeeRepository)
         {
             this.appointmentRepository = appointmentRepository;
             this.serviceRepository = serviceRepository;
+            this.employeeRepository = employeeRepository;
         }
 
         public async Task<bool> IsAvailableAsync(
             DateTime date,
             TimeSpan startTime,
-            int serviceId)
+            int serviceId,
+            int employeeId)
         {
             var service = await serviceRepository.GetByIdReadOnlyAsync(serviceId);
 
@@ -34,7 +39,7 @@ namespace BeautyBook.Services.Core.Services
             var appointmentEnd = appointmentStart.AddMinutes(service.DurationMinutes);
 
             var hasConflict = await appointmentRepository
-                .HasConflictAsync(appointmentStart, appointmentEnd);
+                .HasConflictAsync(appointmentStart, appointmentEnd, employeeId);
 
             return !hasConflict;
         }
@@ -49,7 +54,13 @@ namespace BeautyBook.Services.Core.Services
             return await appointmentRepository.GetByIdForUserAsync(id, userId);
         }
 
-        public async Task<bool> CreateAsync(int serviceId, DateTime date, string startTimeStr, string? notes, string userId)
+        public async Task<bool> CreateAsync(
+            int serviceId,
+            int employeeId,
+            DateTime date,
+            string startTimeStr,
+            string? notes,
+            string userId)
         {
             if (!TryParseTime(startTimeStr, out var selectedTime))
             {
@@ -60,6 +71,8 @@ namespace BeautyBook.Services.Core.Services
 
             if (service == null) return false;
 
+            if (!await CanPerformServiceAsync(employeeId, service)) return false;
+
             var startTime = date.Date.Add(selectedTime);
             var endTime = startTime.AddMinutes(service.DurationMinutes);
 
@@ -68,7 +81,9 @@ namespace BeautyBook.Services.Core.Services
                 return false;
             }
 
-            var isAvailable = await IsAvailableAsync(date.Date, selectedTime, service.Id);
+            var isAvailable = await IsAvailableAsync(
+                date.Date, selectedTime, service.Id, employeeId);
+
             if (!isAvailable) return false;
 
             var appointment = new Appointment
@@ -78,7 +93,8 @@ namespace BeautyBook.Services.Core.Services
                 Notes = notes,
                 Status = "Pending",
                 UserId = userId,
-                ServiceId = service.Id
+                ServiceId = service.Id,
+                EmployeeId = employeeId
             };
 
             await appointmentRepository.AddAsync(appointment);
@@ -87,7 +103,14 @@ namespace BeautyBook.Services.Core.Services
             return true;
         }
 
-        public async Task<bool> EditAsync(int id, int serviceId, DateTime date, string startTimeStr, string? notes, string userId)
+        public async Task<bool> EditAsync(
+            int id,
+            int serviceId,
+            int employeeId,
+            DateTime date,
+            string startTimeStr,
+            string? notes,
+            string userId)
         {
             var appointment = await appointmentRepository
                 .GetTrackedByIdForUserAsync(id, userId);
@@ -103,6 +126,8 @@ namespace BeautyBook.Services.Core.Services
 
             if (service == null) return false;
 
+            if (!await CanPerformServiceAsync(employeeId, service)) return false;
+
             var startTime = date.Date.Add(selectedTime);
             var endTime = startTime.AddMinutes(service.DurationMinutes);
 
@@ -112,11 +137,12 @@ namespace BeautyBook.Services.Core.Services
             }
 
             var hasConflict = await appointmentRepository
-                .HasConflictAsync(startTime, endTime, id);
+                .HasConflictAsync(startTime, endTime, employeeId, id);
 
             if (hasConflict) return false;
 
             appointment.ServiceId = service.Id;
+            appointment.EmployeeId = employeeId;
             appointment.StartTime = startTime;
             appointment.EndTime = endTime;
             appointment.Notes = notes;
@@ -144,7 +170,10 @@ namespace BeautyBook.Services.Core.Services
             return await serviceRepository.GetAllOrderedByNameAsync();
         }
 
-        public async Task<List<string>> GetAvailableSlotsAsync(DateTime date, int serviceId)
+        public async Task<List<string>> GetAvailableSlotsAsync(
+            DateTime date,
+            int serviceId,
+            int employeeId)
         {
             if (date.Date < DateTime.Today || date.DayOfWeek == DayOfWeek.Sunday)
             {
@@ -155,7 +184,13 @@ namespace BeautyBook.Services.Core.Services
 
             if (service == null) return new List<string>();
 
-            var appointments = await appointmentRepository.GetByDateAsync(date);
+            if (!await CanPerformServiceAsync(employeeId, service))
+            {
+                return new List<string>();
+            }
+
+            var appointments = await appointmentRepository
+                .GetByDateAsync(date, employeeId);
 
             var slots = new List<string>();
             var openingTime = new TimeSpan(9, 0, 0);
@@ -181,24 +216,6 @@ namespace BeautyBook.Services.Core.Services
             return slots;
         }
 
-        private bool TryParseTime(string? timeString, out TimeSpan selectedTime)
-        {
-            selectedTime = TimeSpan.Zero;
-            if (string.IsNullOrWhiteSpace(timeString)) return false;
-
-            return TimeSpan.TryParseExact(timeString, @"hh\:mm", CultureInfo.InvariantCulture, out selectedTime);
-        }
-
-        private bool IsValidAppointmentTime(DateTime startTime, DateTime endTime, TimeSpan selectedTime)
-        {
-            if (startTime <= DateTime.Now) return false;
-            if (startTime.DayOfWeek == DayOfWeek.Sunday) return false;
-            if (selectedTime.TotalMinutes % 15 != 0) return false;
-            if (startTime.TimeOfDay < new TimeSpan(9, 0, 0) || endTime.TimeOfDay > new TimeSpan(18, 0, 0)) return false;
-
-            return true;
-        }
-
         public async Task<IEnumerable<Appointment>> GetAllForAdminAsync()
         {
             return await appointmentRepository.GetAllWithDetailsAsync();
@@ -221,6 +238,32 @@ namespace BeautyBook.Services.Core.Services
 
             appointmentRepository.Delete(appointment);
             await appointmentRepository.SaveChangesAsync();
+            return true;
+        }
+
+        // The employee must exist and work in the service's category.
+        private async Task<bool> CanPerformServiceAsync(int employeeId, Service service)
+        {
+            var employee = await employeeRepository.GetByIdReadOnlyAsync(employeeId);
+
+            return employee != null && employee.CategoryId == service.CategoryId;
+        }
+
+        private bool TryParseTime(string? timeString, out TimeSpan selectedTime)
+        {
+            selectedTime = TimeSpan.Zero;
+            if (string.IsNullOrWhiteSpace(timeString)) return false;
+
+            return TimeSpan.TryParseExact(timeString, @"hh\:mm", CultureInfo.InvariantCulture, out selectedTime);
+        }
+
+        private bool IsValidAppointmentTime(DateTime startTime, DateTime endTime, TimeSpan selectedTime)
+        {
+            if (startTime <= DateTime.Now) return false;
+            if (startTime.DayOfWeek == DayOfWeek.Sunday) return false;
+            if (selectedTime.TotalMinutes % 15 != 0) return false;
+            if (startTime.TimeOfDay < new TimeSpan(9, 0, 0) || endTime.TimeOfDay > new TimeSpan(18, 0, 0)) return false;
+
             return true;
         }
     }

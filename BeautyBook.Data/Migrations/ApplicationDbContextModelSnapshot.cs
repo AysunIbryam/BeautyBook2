@@ -103,6 +103,9 @@ namespace BeautyBook2.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
@@ -126,6 +129,8 @@ namespace BeautyBook2.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("ServiceId");
 
@@ -508,6 +513,12 @@ namespace BeautyBook2.Data.Migrations
 
             modelBuilder.Entity("BeautyBook.Data.Models.Appointment", b =>
                 {
+                    b.HasOne("BeautyBook.Data.Models.Models.Employee", "Employee")
+                        .WithMany("Appointments")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("BeautyBook.Data.Models.Service", "Service")
                         .WithMany("Appointments")
                         .HasForeignKey("ServiceId")
@@ -519,6 +530,8 @@ namespace BeautyBook2.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Employee");
 
                     b.Navigation("Service");
 
@@ -603,6 +616,11 @@ namespace BeautyBook2.Data.Migrations
                     b.Navigation("Employees");
 
                     b.Navigation("Services");
+                });
+
+            modelBuilder.Entity("BeautyBook.Data.Models.Models.Employee", b =>
+                {
+                    b.Navigation("Appointments");
                 });
 
             modelBuilder.Entity("BeautyBook.Data.Models.Service", b =>

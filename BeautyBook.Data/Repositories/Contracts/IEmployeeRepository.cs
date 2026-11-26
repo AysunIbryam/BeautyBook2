@@ -7,5 +7,7 @@ namespace BeautyBook.Data.Repositories.Contracts
     {
         // Read-only, includes Category, ordered by category and name.
         Task<IEnumerable<Employee>> GetAllWithCategoryAsync();
+        Task<IEnumerable<Employee>> GetByCategoryAsync(int categoryId);
+        Task<Employee?> GetByIdReadOnlyAsync(int id);
     }
 }

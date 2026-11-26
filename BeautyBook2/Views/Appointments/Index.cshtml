@@ -23,6 +23,7 @@
             <thead>
                 <tr>
                     <th>Услуга</th>
+                    <th>Служител</th>
                     <th>Начало</th>
                     <th>Край</th>
                     <th>Статус</th>
@@ -38,7 +39,9 @@
                         <td>
                             @(appointment.Service?.Name ?? "Няма услуга")
                         </td>
-
+                        <td>
+                            @(appointment.Employee?.FullName ?? "—")
+                        </td>
                         <td>
                             @appointment.StartTime.ToString("dd.MM.yyyy HH:mm")
                         </td>

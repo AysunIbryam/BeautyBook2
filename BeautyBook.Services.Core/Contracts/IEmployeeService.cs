@@ -6,5 +6,6 @@ namespace BeautyBook.Services.Core.Contracts
     public interface IEmployeeService
     {
         Task<IEnumerable<Employee>> GetAllAsync();
+        Task<IEnumerable<Employee>> GetByServiceAsync(int serviceId);
     }
 }

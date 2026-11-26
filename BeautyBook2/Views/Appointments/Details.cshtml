@@ -13,6 +13,8 @@
             <h4 class="card-title">@Model.Service?.Name</h4>
 
             <dl class="row mt-4">
+                <dt class="col-sm-4">Служител</dt>
+                <dd class="col-sm-8">@Model.Employee?.FullName</dd>
                 <dt class="col-sm-4">Дата</dt>
                 <dd class="col-sm-8">
                     @Model.StartTime.ToString("dd.MM.yyyy")

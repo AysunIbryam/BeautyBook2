@@ -7,11 +7,17 @@
 
 <h1>Запази час</h1>
 
-<p>Избери услуга и удобно за теб време.</p>
+<p>Избери услуга, служител и удобно за теб време.</p>
 
 <hr />
 
-<form asp-controller="Appointments" asp-action="Create" method="post">
+<form id="appointment-form"
+      asp-controller="Appointments"
+      asp-action="Create"
+      method="post"
+      data-employees-url="@Url.Action("EmployeesByService", "Appointments")"
+      data-slots-url="@Url.Action("AvailableSlots", "Appointments")">
+
     @Html.AntiForgeryToken()
 
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -29,6 +35,18 @@
     </div>
 
     <div class="mb-3">
+        <label asp-for="EmployeeId" class="form-label"></label>
+
+        <select asp-for="EmployeeId"
+                class="form-select"
+                data-selected="@Model.EmployeeId">
+            <option value="">-- Първо избери услуга --</option>
+        </select>
+
+        <span asp-validation-for="EmployeeId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
         <label asp-for="Date" class="form-label"></label>
 
         <input asp-for="Date" type="date" class="form-control" />
@@ -39,7 +57,9 @@
     <div class="mb-3">
         <label asp-for="StartTime" class="form-label"></label>
 
-        <select asp-for="StartTime" class="form-select">
+        <select asp-for="StartTime"
+                class="form-select"
+                data-selected="@Model.StartTime">
             <option value="">-- Избери час --</option>
         </select>
 
@@ -67,64 +87,7 @@
     </a>
 </form>
 
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
-    <script>
-        const serviceSelect = document.getElementById("ServiceId");
-        const dateInput = document.getElementById("Date");
-        const timeSelect = document.getElementById("StartTime");
-
-        async function loadAvailableSlots() {
-            const serviceId = serviceSelect.value;
-            const date = dateInput.value;
-
-            timeSelect.innerHTML =
-                '<option value="">-- Избери час --</option>';
-
-            if (!serviceId || !date) {
-                return;
-            }
-
-            timeSelect.disabled = true;
-
-            try {
-                const url =
-                    '@Url.Action("AvailableSlots", "Appointments")'
-                    + '?date=' + encodeURIComponent(date)
-                    + '&serviceId=' + encodeURIComponent(serviceId);
-
-                const response = await fetch(url);
-
-                if (!response.ok) {
-                    throw new Error("Неуспешно зареждане на часовете.");
-                }
-
-                const slots = await response.json();
-
-                if (slots.length === 0) {
-                    timeSelect.innerHTML =
-                        '<option value="">Няма свободни часове</option>';
-                } else {
-                    slots.forEach(function (slot) {
-                        const option = document.createElement("option");
-                        option.value = slot;
-                        option.textContent = slot;
-                        timeSelect.appendChild(option);
-                    });
-                }
-            } catch (error) {
-                timeSelect.innerHTML =
-                    '<option value="">Грешка при зареждане</option>';
-            } finally {
-                timeSelect.disabled = false;
-            }
-        }
-
-        serviceSelect.addEventListener("change", loadAvailableSlots);
-        dateInput.addEventListener("change", loadAvailableSlots);
-    </script>
+    <script src="~/js/appointment-form.js" asp-append-version="true"></script>
 }
-
-

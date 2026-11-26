@@ -16,6 +16,12 @@ namespace BeautyBook.Data.Configurations
                 .HasForeignKey(e => e.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder
+                 .HasMany(e => e.Appointments)
+                 .WithOne(a => a.Employee)
+                 .HasForeignKey(a => a.EmployeeId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasData(
                 new Employee
                 {

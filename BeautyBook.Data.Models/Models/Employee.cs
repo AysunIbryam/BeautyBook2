@@ -33,5 +33,7 @@ namespace BeautyBook.Data.Models.Models
 
         [NotMapped]
         public string FullName => $"{FirstName} {LastName}";
+        public ICollection<Appointment> Appointments { get; set; }
+            = new List<Appointment>();
     }
 }

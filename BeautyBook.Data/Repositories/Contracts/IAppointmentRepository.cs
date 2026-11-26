@@ -1,4 +1,5 @@
 ﻿using BeautyBook.Data.Models;
+using BeautyBook.Data.Models.Models;
 
 namespace BeautyBook.Data.Repositories.Contracts
 {
@@ -6,17 +7,20 @@ namespace BeautyBook.Data.Repositories.Contracts
     {
         Task<IEnumerable<Appointment>> GetByUserAsync(string userId);
 
-        // Read-only (AsNoTracking), includes Service.
+        // Read-only (AsNoTracking), includes Service and Employee.
         Task<Appointment?> GetByIdForUserAsync(int id, string userId);
 
         // Tracked entity, used for edit and delete.
         Task<Appointment?> GetTrackedByIdForUserAsync(int id, string userId);
 
-        Task<List<Appointment>> GetByDateAsync(DateTime date);
+        // Appointments of one employee on a given day.
+        Task<List<Appointment>> GetByDateAsync(DateTime date, int employeeId);
 
+        // Checks for overlap with the same employee's other appointments.
         Task<bool> HasConflictAsync(
             DateTime start,
             DateTime end,
+            int employeeId,
             int? excludeAppointmentId = null);
 
         Task<List<Appointment>> GetAllWithDetailsAsync();
