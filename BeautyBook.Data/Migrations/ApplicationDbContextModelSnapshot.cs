@@ -22,7 +22,7 @@ namespace BeautyBook2.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BeautyBook2.Data.Models.ApplicationUser", b =>
+            modelBuilder.Entity("BeautyBook.Data.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -95,7 +95,7 @@ namespace BeautyBook2.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("BeautyBook2.Data.Models.Appointment", b =>
+            modelBuilder.Entity("BeautyBook.Data.Models.Appointment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -134,7 +134,7 @@ namespace BeautyBook2.Data.Migrations
                     b.ToTable("Appointments");
                 });
 
-            modelBuilder.Entity("BeautyBook2.Data.Models.Category", b =>
+            modelBuilder.Entity("BeautyBook.Data.Models.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -169,7 +169,100 @@ namespace BeautyBook2.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("BeautyBook2.Data.Models.Service", b =>
+            modelBuilder.Entity("BeautyBook.Data.Models.Models.Employee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Bio")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Employees");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Bio = "Специалист по боядисване и сложни цветови техники.",
+                            CategoryId = 1,
+                            FirstName = "Мария",
+                            LastName = "Иванова",
+                            Position = "Стилист колорист"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Bio = "Подстригване, оформяне и грижа за косата.",
+                            CategoryId = 1,
+                            FirstName = "Десислава",
+                            LastName = "Георгиева",
+                            Position = "Фризьор"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Bio = "Класически маникюр и маникюр с гел лак.",
+                            CategoryId = 2,
+                            FirstName = "Елена",
+                            LastName = "Петрова",
+                            Position = "Маникюрист"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Bio = "Изграждане и дизайн на нокти.",
+                            CategoryId = 2,
+                            FirstName = "Виктория",
+                            LastName = "Стоянова",
+                            Position = "Нокътен техник"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Bio = "Дневен и ежедневен грим.",
+                            CategoryId = 3,
+                            FirstName = "Ралица",
+                            LastName = "Димитрова",
+                            Position = "Гримьор"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Bio = "Вечерен и официален грим за специални поводи.",
+                            CategoryId = 3,
+                            FirstName = "Калина",
+                            LastName = "Тодорова",
+                            Position = "Визажист"
+                        });
+                });
+
+            modelBuilder.Entity("BeautyBook.Data.Models.Service", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -413,15 +506,15 @@ namespace BeautyBook2.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BeautyBook2.Data.Models.Appointment", b =>
+            modelBuilder.Entity("BeautyBook.Data.Models.Appointment", b =>
                 {
-                    b.HasOne("BeautyBook2.Data.Models.Service", "Service")
+                    b.HasOne("BeautyBook.Data.Models.Service", "Service")
                         .WithMany("Appointments")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BeautyBook2.Data.Models.ApplicationUser", "User")
+                    b.HasOne("BeautyBook.Data.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -432,9 +525,20 @@ namespace BeautyBook2.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BeautyBook2.Data.Models.Service", b =>
+            modelBuilder.Entity("BeautyBook.Data.Models.Models.Employee", b =>
                 {
-                    b.HasOne("BeautyBook2.Data.Models.Category", "Category")
+                    b.HasOne("BeautyBook.Data.Models.Category", "Category")
+                        .WithMany("Employees")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("BeautyBook.Data.Models.Service", b =>
+                {
+                    b.HasOne("BeautyBook.Data.Models.Category", "Category")
                         .WithMany("Services")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -454,7 +558,7 @@ namespace BeautyBook2.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("BeautyBook2.Data.Models.ApplicationUser", null)
+                    b.HasOne("BeautyBook.Data.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -463,7 +567,7 @@ namespace BeautyBook2.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("BeautyBook2.Data.Models.ApplicationUser", null)
+                    b.HasOne("BeautyBook.Data.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -478,7 +582,7 @@ namespace BeautyBook2.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BeautyBook2.Data.Models.ApplicationUser", null)
+                    b.HasOne("BeautyBook.Data.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -487,19 +591,21 @@ namespace BeautyBook2.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("BeautyBook2.Data.Models.ApplicationUser", null)
+                    b.HasOne("BeautyBook.Data.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BeautyBook2.Data.Models.Category", b =>
+            modelBuilder.Entity("BeautyBook.Data.Models.Category", b =>
                 {
+                    b.Navigation("Employees");
+
                     b.Navigation("Services");
                 });
 
-            modelBuilder.Entity("BeautyBook2.Data.Models.Service", b =>
+            modelBuilder.Entity("BeautyBook.Data.Models.Service", b =>
                 {
                     b.Navigation("Appointments");
                 });

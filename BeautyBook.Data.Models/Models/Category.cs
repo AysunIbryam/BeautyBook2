@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BeautyBook.Data.Models.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace BeautyBook.Data.Models
 {
@@ -12,6 +13,9 @@ namespace BeautyBook.Data.Models
 
         public ICollection<Service> Services { get; set; }
             = new List<Service>();
+
+        public ICollection<Employee> Employees { get; set; }
+            = new List<Employee>();
     }
 
 }
