@@ -25,6 +25,7 @@
                     <th>Услуга</th>
                     <th>Начало</th>
                     <th>Край</th>
+                    <th>Статус</th>
                     <th>Бележка</th>
                     <th>Действия</th>
                 </tr>
@@ -44,6 +45,20 @@
 
                         <td>
                             @appointment.EndTime.ToString("dd.MM.yyyy HH:mm")
+                        </td>
+                        <td>
+                            @switch (appointment.Status)
+                            {
+                                case "Confirmed":
+                                    <span class="badge bg-success">Потвърдена</span>
+                                    break;
+                                case "Cancelled":
+                                    <span class="badge bg-danger">Отказана</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-warning text-dark">Чакаща</span>
+                                    break;
+                            }
                         </td>
 
                         <td>

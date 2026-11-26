@@ -120,6 +120,7 @@ namespace BeautyBook.Services.Core.Services
             appointment.StartTime = startTime;
             appointment.EndTime = endTime;
             appointment.Notes = notes;
+            appointment.Status = "Pending";
 
             await appointmentRepository.SaveChangesAsync();
             return true;
