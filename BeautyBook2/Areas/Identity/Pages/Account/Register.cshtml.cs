@@ -1,4 +1,5 @@
 ﻿using BeautyBook.Data.Models;
+using BeautyBook.Data.Models.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -84,6 +85,8 @@ namespace BeautyBook.Web.Areas.Identity.Pages.Account
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
+
+         
 
             return Page();
         }

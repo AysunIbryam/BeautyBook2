@@ -19,5 +19,9 @@ namespace BeautyBook.Services.Core.Contracts
         Task<IEnumerable<Service>> GetAllServicesAsync();
 
         Task<List<string>> GetAvailableSlotsAsync(DateTime date, int serviceId);
+
+        Task<IEnumerable<Appointment>> GetAllForAdminAsync();
+        Task<bool> SetStatusAsync(int id, string status);
+        Task<bool> DeleteAsAdminAsync(int id);
     }
 }

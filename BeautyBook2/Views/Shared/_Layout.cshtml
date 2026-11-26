@@ -65,6 +65,17 @@
                                 Моите часове
                             </a>
                         </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-area="Admin"
+                                   asp-controller="Appointments"
+                                   asp-action="Index">
+                                    Всички резервации
+                                </a>
+                            </li>
+                        }
                     </ul>
 
                     <div class="beauty-account">

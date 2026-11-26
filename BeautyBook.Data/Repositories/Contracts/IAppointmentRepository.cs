@@ -18,5 +18,9 @@ namespace BeautyBook.Data.Repositories.Contracts
             DateTime start,
             DateTime end,
             int? excludeAppointmentId = null);
+
+        Task<List<Appointment>> GetAllWithDetailsAsync();
+
+        Task<Appointment?> GetTrackedByIdAsync(int id);
     }
 }

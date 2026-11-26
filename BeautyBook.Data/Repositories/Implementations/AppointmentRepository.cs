@@ -55,5 +55,19 @@ namespace BeautyBook.Data.Repositories.Implementations
                     a.StartTime < end &&
                     a.EndTime > start);
         }
+
+        public async Task<List<Appointment>> GetAllWithDetailsAsync()
+        {
+            return await AllAsNoTracking()
+                .Include(a => a.Service)
+                .Include(a => a.User)
+                .OrderBy(a => a.StartTime)
+                .ToListAsync();
+        }
+
+        public async Task<Appointment?> GetTrackedByIdAsync(int id)
+        {
+            return await All().FirstOrDefaultAsync(a => a.Id == id);
+        }
     }
 }

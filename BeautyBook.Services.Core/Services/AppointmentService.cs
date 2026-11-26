@@ -197,5 +197,30 @@ namespace BeautyBook.Services.Core.Services
 
             return true;
         }
+
+        public async Task<IEnumerable<Appointment>> GetAllForAdminAsync()
+        {
+            return await appointmentRepository.GetAllWithDetailsAsync();
+        }
+
+        public async Task<bool> SetStatusAsync(int id, string status)
+        {
+            var appointment = await appointmentRepository.GetTrackedByIdAsync(id);
+            if (appointment == null) return false;
+
+            appointment.Status = status;
+            await appointmentRepository.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteAsAdminAsync(int id)
+        {
+            var appointment = await appointmentRepository.GetTrackedByIdAsync(id);
+            if (appointment == null) return false;
+
+            appointmentRepository.Delete(appointment);
+            await appointmentRepository.SaveChangesAsync();
+            return true;
+        }
     }
 }

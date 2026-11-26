@@ -11,7 +11,7 @@ namespace BeautyBook.Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +23,7 @@ namespace BeautyBook.Web
 
             builder.Services.AddDefaultIdentity<ApplicationUser>
                 (options => options.SignIn.RequireConfirmedAccount = false)
+                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
@@ -35,6 +36,10 @@ namespace BeautyBook.Web
 
 
             var app = builder.Build();
+            using (var scope = app.Services.CreateScope())
+            {
+                await BeautyBook.Web.Infrastructure.RoleSeeder.SeedAsync(scope.ServiceProvider);
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -57,11 +62,15 @@ namespace BeautyBook.Web
 
 
             app.MapControllerRoute(
+                name: "areas",
+                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+            app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
 
-            app.Run();
+            await app.RunAsync();
         }
     }
 }
