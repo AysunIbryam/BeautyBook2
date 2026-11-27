@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Админ панел";
+}
+
+<h1>Админ панел</h1>
+<p>Управление на BeautyBook.</p>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Резервации</h5>
+                <p class="card-text">Преглед, потвърждаване и отказване на всички резервации.</p>
+                <a asp-area="Admin"
+                   asp-controller="Appointments"
+                   asp-action="Index"
+                   class="btn btn-primary">
+                    Към резервациите
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

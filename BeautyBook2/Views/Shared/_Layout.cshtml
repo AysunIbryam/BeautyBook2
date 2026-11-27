@@ -36,6 +36,7 @@
                     <ul class="navbar-nav mx-auto">
                         <li class="nav-item">
                             <a class="nav-link"
+                               asp-area=""
                                asp-controller="Home"
                                asp-action="Index">
                                 Начало
@@ -44,6 +45,7 @@
 
                         <li class="nav-item">
                             <a class="nav-link"
+                               asp-area=""
                                asp-controller="Services"
                                asp-action="Index">
                                 Услуги
@@ -52,32 +54,42 @@
 
                         <li class="nav-item">
                             <a class="nav-link"
+                               asp-area=""
                                asp-controller="Categories"
                                asp-action="Index">
                                 Категории
                             </a>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Employees" asp-action="Index">
+                            <a class="nav-link"
+                               asp-area=""
+                               asp-controller="Employees"
+                               asp-action="Index">
                                 Екип
                             </a>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               asp-controller="Appointments"
-                               asp-action="Index">
-                                Моите часове
-                            </a>
-                        </li>
+                        @if (!User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-area=""
+                                   asp-controller="Appointments"
+                                   asp-action="Index">
+                                    Моите часове
+                                </a>
+                            </li>
+                        }
+
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link"
                                    asp-area="Admin"
-                                   asp-controller="Appointments"
+                                   asp-controller="Home"
                                    asp-action="Index">
-                                    Всички резервации
+                                    Админ панел
                                 </a>
                             </li>
                         }
