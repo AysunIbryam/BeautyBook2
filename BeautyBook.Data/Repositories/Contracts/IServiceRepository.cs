@@ -15,5 +15,10 @@ namespace BeautyBook.Data.Repositories.Contracts
 
         // Read-only lookup without includes.
         Task<Service?> GetByIdReadOnlyAsync(int id);
+
+        // Tracked entity, used for edit and delete.
+        Task<Service?> GetTrackedByIdAsync(int id);
+
+        Task<bool> HasAppointmentsAsync(int serviceId);
     }
 }

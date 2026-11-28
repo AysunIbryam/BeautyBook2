@@ -38,5 +38,17 @@ namespace BeautyBook.Data.Repositories.Implementations
             return await AllAsNoTracking()
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
+
+        public async Task<Service?> GetTrackedByIdAsync(int id)
+        {
+            return await All()
+                .FirstOrDefaultAsync(s => s.Id == id);
+        }
+
+        public async Task<bool> HasAppointmentsAsync(int serviceId)
+        {
+            return await context.Appointments
+                .AnyAsync(a => a.ServiceId == serviceId);
+        }
     }
 }

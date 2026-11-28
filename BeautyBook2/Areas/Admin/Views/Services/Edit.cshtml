@@ -1,0 +1,27 @@
+﻿@model ServiceFormViewModel
+
+@{
+    ViewData["Title"] = "Редактиране на услуга";
+}
+
+<h1>Редактиране на услуга</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit"
+              asp-route-id="@ViewContext.RouteData.Values["id"]"
+              method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <partial name="_ServiceForm" model="Model" />
+
+            <button type="submit" class="btn btn-primary">Запази промените</button>
+            <a asp-action="Index" class="btn btn-secondary">Отказ</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
