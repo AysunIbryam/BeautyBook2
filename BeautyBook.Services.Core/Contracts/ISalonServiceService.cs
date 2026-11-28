@@ -1,4 +1,5 @@
 ﻿using BeautyBook.Data.Models;
+using BeautyBook.Services.Core.Models;
 
 namespace BeautyBook.Services.Core.Contracts
 {
@@ -27,5 +28,11 @@ namespace BeautyBook.Services.Core.Contracts
 
         // Returns false if the service does not exist or has appointments.
         Task<bool> DeleteAsync(int id);
+
+        Task<PagedResult<Service>> SearchAsync(
+            string? search,
+            int? categoryId,
+            int page,
+            int pageSize);
     }
 }

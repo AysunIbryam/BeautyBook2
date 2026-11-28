@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BeautyBook.Data.Models.Service>
+﻿@model BeautyBook.Web.ViewModels.ServicesIndexViewModel
 
 @{
     ViewData["Title"] = "Услуги";
@@ -8,45 +8,72 @@
 
 <p>Разгледайте предлаганите услуги, техните цени и продължителност.</p>
 
-<div class="row">
-    @foreach (var service in Model)
-    {
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">@service.Name</h5>
+<form method="get" asp-controller="Services" asp-action="Index" class="row g-2 mb-4">
+    <div class="col-md-5">
+        <input asp-for="Search"
+               class="form-control"
+               placeholder="Търси по име или описание..." />
+    </div>
 
-                    <p class="text-muted">
-                        Категория: @service.Category.Name
-                    </p>
+    <div class="col-md-4">
+        <select asp-for="CategoryId" asp-items="Model.Categories" class="form-select">
+            <option value="">Всички категории</option>
+        </select>
+    </div>
 
-                    <p class="card-text">
-                        @(service.Description ?? "Няма описание.")
-                    </p>
+    <div class="col-md-3 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Търси</button>
+        <a asp-controller="Services" asp-action="Index" class="btn btn-outline-secondary">
+            Изчисти
+        </a>
+    </div>
+</form>
 
-                    <p>
-                        <strong>Цена:</strong>
-                        @service.Price.ToString("0.00") евро.
-                    </p>
+@if (Model.Services.Items.Any())
+{
+    <p class="text-muted">Намерени услуги: @Model.Services.TotalItems</p>
 
-                    <p>
-                        <strong>Продължителност:</strong>
-                        @service.DurationMinutes мин.
-                    </p>
+    <div class="row">
+        @foreach (var service in Model.Services.Items)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@service.Name</h5>
 
-                    <a asp-controller="Services"
-                       asp-action="Details"
-                       asp-route-id="@service.Id"
-                       class="btn btn-primary">
-                        Виж подробности
-                    </a>
+                        <p class="text-muted">
+                            Категория: @service.Category.Name
+                        </p>
+
+                        <p class="card-text">
+                            @(service.Description ?? "Няма описание.")
+                        </p>
+
+                        <p>
+                            <strong>Цена:</strong>
+                            @service.Price.ToString("0.00") евро.
+                        </p>
+
+                        <p>
+                            <strong>Продължителност:</strong>
+                            @service.DurationMinutes мин.
+                        </p>
+
+                        <a asp-controller="Services"
+                           asp-action="Details"
+                           asp-route-id="@service.Id"
+                           class="btn btn-primary">
+                            Виж подробности
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-    }
-</div>
+        }
+    </div>
 
-@if (!Model.Any())
+    <partial name="_Pagination" model="Model.Pagination" />
+}
+else
 {
-    <p>Все още няма добавени услуги.</p>
+    <div class="alert alert-info">Няма намерени услуги.</div>
 }

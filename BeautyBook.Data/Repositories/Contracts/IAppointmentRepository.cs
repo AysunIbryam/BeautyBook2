@@ -26,5 +26,8 @@ namespace BeautyBook.Data.Repositories.Contracts
         Task<List<Appointment>> GetAllWithDetailsAsync();
 
         Task<Appointment?> GetTrackedByIdAsync(int id);
+        Task<int> CountForAdminAsync(string? status);
+
+        Task<List<Appointment>> GetPageForAdminAsync(string? status, int skip, int take);
     }
 }

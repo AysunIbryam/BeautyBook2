@@ -3,6 +3,7 @@ using BeautyBook.Data.Models.Models;
 using BeautyBook.Data.Repositories.Contracts;
 using BeautyBook.Services.Core.Contracts;
 using System.Globalization;
+using BeautyBook.Services.Core.Models;
 
 namespace BeautyBook.Services.Core.Services
 {
@@ -219,6 +220,19 @@ namespace BeautyBook.Services.Core.Services
         public async Task<IEnumerable<Appointment>> GetAllForAdminAsync()
         {
             return await appointmentRepository.GetAllWithDetailsAsync();
+        }
+
+        public async Task<PagedResult<Appointment>> GetPageForAdminAsync(string? status,int page,int pageSize)
+        {
+            var totalItems = await appointmentRepository.CountForAdminAsync(status);
+            page = PagedResult<Appointment>.ClampPage(page, totalItems, pageSize);
+
+            var items = await appointmentRepository.GetPageForAdminAsync(
+                status,
+                (page - 1) * pageSize,
+                pageSize);
+
+            return new PagedResult<Appointment>(items, page, pageSize, totalItems);
         }
 
         public async Task<bool> SetStatusAsync(int id, string status)

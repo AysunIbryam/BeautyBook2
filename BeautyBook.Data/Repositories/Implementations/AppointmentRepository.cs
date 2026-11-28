@@ -77,5 +77,33 @@ namespace BeautyBook.Data.Repositories.Implementations
         {
             return await All().FirstOrDefaultAsync(a => a.Id == id);
         }
+        public async Task<int> CountForAdminAsync(string? status)
+        {
+            return await FilterByStatus(AllAsNoTracking(), status).CountAsync();
+        }
+
+        public async Task<List<Appointment>> GetPageForAdminAsync(
+            string? status,
+            int skip,
+            int take)
+        {
+            return await FilterByStatus(AllAsNoTracking(), status)
+                .Include(a => a.Service)
+                .Include(a => a.User)
+                .Include(a => a.Employee)
+                .OrderBy(a => a.StartTime)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+        }
+
+        private static IQueryable<Appointment> FilterByStatus(
+            IQueryable<Appointment> query,
+            string? status)
+        {
+            return string.IsNullOrEmpty(status)
+                ? query
+                : query.Where(a => a.Status == status);
+        }
     }
 }

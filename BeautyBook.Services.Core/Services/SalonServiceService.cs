@@ -1,6 +1,7 @@
 ﻿using BeautyBook.Data.Models;
 using BeautyBook.Data.Repositories.Contracts;
 using BeautyBook.Services.Core.Contracts;
+using BeautyBook.Services.Core.Models;
 
 namespace BeautyBook.Services.Core.Services
 {
@@ -111,5 +112,25 @@ namespace BeautyBook.Services.Core.Services
                 ? null
                 : description.Trim();
         }
+        public async Task<PagedResult<Service>> SearchAsync(
+            string? search,
+            int? categoryId,
+            int page,
+            int pageSize)
+        {
+            search = string.IsNullOrWhiteSpace(search) ? null : search.Trim();
+
+            var totalItems = await serviceRepository.CountFilteredAsync(search, categoryId);
+            page = PagedResult<Service>.ClampPage(page, totalItems, pageSize);
+
+            var items = await serviceRepository.GetFilteredPageAsync(
+                search,
+                categoryId,
+                (page - 1) * pageSize,
+                pageSize);
+
+            return new PagedResult<Service>(items, page, pageSize, totalItems);
+        }
+
     }
 }

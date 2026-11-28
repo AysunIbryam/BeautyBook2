@@ -1,5 +1,6 @@
 ﻿using BeautyBook.Data.Models;
 using BeautyBook.Data.Models.Models;
+using BeautyBook.Services.Core.Models;
 
 namespace BeautyBook.Services.Core.Contracts
 {
@@ -26,5 +27,6 @@ namespace BeautyBook.Services.Core.Contracts
         Task<bool> SetStatusAsync(int id, string status);
 
         Task<bool> DeleteAsAdminAsync(int id);
+        Task<PagedResult<Appointment>> GetPageForAdminAsync(string? status, int page,int pageSize);
     }
 }

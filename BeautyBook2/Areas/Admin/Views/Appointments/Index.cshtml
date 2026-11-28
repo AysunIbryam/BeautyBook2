@@ -1,10 +1,28 @@
-﻿@model IEnumerable<Appointment>
+﻿@model AppointmentsIndexViewModel
 
 @{
     ViewData["Title"] = "Всички резервации";
 }
 
 <h1>Всички резервации</h1>
+
+<form method="get" asp-action="Index" class="row g-2 mb-4">
+    <div class="col-md-4">
+        <select name="status" class="form-select">
+            <option value="" selected="@(Model.Status == null)">Всички статуси</option>
+            <option value="Pending" selected="@(Model.Status == "Pending")">Чакащи</option>
+            <option value="Confirmed" selected="@(Model.Status == "Confirmed")">Потвърдени</option>
+            <option value="Cancelled" selected="@(Model.Status == "Cancelled")">Отказани</option>
+        </select>
+    </div>
+
+    <div class="col-md-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Филтрирай</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Изчисти</a>
+    </div>
+</form>
+
+<p class="text-muted">Намерени резервации: @Model.Appointments.TotalItems</p>
 
 <div class="table-responsive">
     <table class="table table-striped table-hover align-middle">
@@ -20,7 +38,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var a in Model)
+            @foreach (var a in Model.Appointments.Items)
             {
                 var (badge, text) = a.Status switch
                 {
@@ -69,3 +87,10 @@
         </tbody>
     </table>
 </div>
+
+@if (!Model.Appointments.Items.Any())
+{
+    <div class="alert alert-info">Няма резервации за избрания филтър.</div>
+}
+
+<partial name="_Pagination" model="Model.Pagination" />

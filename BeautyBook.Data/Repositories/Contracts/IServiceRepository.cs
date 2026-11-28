@@ -20,5 +20,12 @@ namespace BeautyBook.Data.Repositories.Contracts
         Task<Service?> GetTrackedByIdAsync(int id);
 
         Task<bool> HasAppointmentsAsync(int serviceId);
+        Task<int> CountFilteredAsync(string? search, int? categoryId);
+
+        Task<List<Service>> GetFilteredPageAsync(
+            string? search,
+            int? categoryId,
+            int skip,
+            int take);
     }
 }

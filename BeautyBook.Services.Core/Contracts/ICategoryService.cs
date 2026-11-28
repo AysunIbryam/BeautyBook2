@@ -18,5 +18,6 @@ namespace BeautyBook.Services.Core.Contracts
 
         // Returns false if the category does not exist or has dependencies.
         Task<bool> DeleteAsync(int id);
+        
     }
 }

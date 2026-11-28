@@ -50,5 +50,45 @@ namespace BeautyBook.Data.Repositories.Implementations
             return await context.Appointments
                 .AnyAsync(a => a.ServiceId == serviceId);
         }
+        public async Task<int> CountFilteredAsync(string? search, int? categoryId)
+        {
+            return await ApplyFilter(AllAsNoTracking(), search, categoryId)
+                .CountAsync();
+        }
+
+        public async Task<List<Service>> GetFilteredPageAsync(
+            string? search,
+            int? categoryId,
+            int skip,
+            int take)
+        {
+            return await ApplyFilter(AllAsNoTracking(), search, categoryId)
+                .Include(s => s.Category)
+                .OrderBy(s => s.Category.Name)
+                .ThenBy(s => s.Name)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+        }
+
+        private static IQueryable<Service> ApplyFilter(
+            IQueryable<Service> query,
+            string? search,
+            int? categoryId)
+        {
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(s =>
+                    s.Name.Contains(search) ||
+                    (s.Description != null && s.Description.Contains(search)));
+            }
+
+            if (categoryId.HasValue)
+            {
+                query = query.Where(s => s.CategoryId == categoryId.Value);
+            }
+
+            return query;
+        }
     }
 }
