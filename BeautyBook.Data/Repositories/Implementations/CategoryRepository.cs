@@ -24,5 +24,23 @@ namespace BeautyBook.Data.Repositories.Implementations
                 .Include(c => c.Services)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
+        public async Task<Category?> GetTrackedByIdAsync(int id)
+        {
+            return await All()
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<bool> HasDependenciesAsync(int id)
+        {
+            return await context.Services.AnyAsync(s => s.CategoryId == id)
+                || await context.Employees.AnyAsync(e => e.CategoryId == id);
+        }
+
+        public async Task<bool> NameExistsAsync(string name, int? excludeId = null)
+        {
+            return await AllAsNoTracking()
+                .AnyAsync(c => c.Name == name &&
+                               (excludeId == null || c.Id != excludeId));
+        }
     }
 }

@@ -9,5 +9,13 @@ namespace BeautyBook.Data.Repositories.Contracts
         Task<IEnumerable<Employee>> GetAllWithCategoryAsync();
         Task<IEnumerable<Employee>> GetByCategoryAsync(int categoryId);
         Task<Employee?> GetByIdReadOnlyAsync(int id);
+
+        // Read-only, includes Category.
+        Task<Employee?> GetByIdWithCategoryAsync(int id);
+
+        // Tracked entity, used for edit and delete.
+        Task<Employee?> GetTrackedByIdAsync(int id);
+
+        Task<bool> HasAppointmentsAsync(int employeeId);
     }
 }

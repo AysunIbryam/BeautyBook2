@@ -1,0 +1,25 @@
+﻿@model EmployeeFormViewModel
+
+@{
+    ViewData["Title"] = "Нов служител";
+}
+
+<h1>Нов служител</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <partial name="_EmployeeForm" model="Model" />
+
+            <button type="submit" class="btn btn-primary">Запази</button>
+            <a asp-action="Index" class="btn btn-secondary">Отказ</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

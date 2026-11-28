@@ -1,0 +1,63 @@
+﻿@model IEnumerable<Employee>
+
+@{
+    ViewData["Title"] = "Управление на служители";
+}
+
+<h1>Управление на служители</h1>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Нов служител</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Назад към панела</a>
+</p>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Име</th>
+                <th>Длъжност</th>
+                <th>Категория</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in Model)
+            {
+                <tr>
+                    <td>@employee.FullName</td>
+                    <td>@employee.Position</td>
+                    <td>@employee.Category.Name</td>
+                    <td>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a asp-action="Edit" asp-route-id="@employee.Id"
+                               class="btn btn-outline-secondary btn-sm">Редактирай</a>
+                            <a asp-action="Delete" asp-route-id="@employee.Id"
+                               class="btn btn-outline-danger btn-sm">Изтрий</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Все още няма добавени служители.</div>
+}
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
